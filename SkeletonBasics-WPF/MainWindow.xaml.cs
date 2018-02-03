@@ -14,17 +14,24 @@ namespace Microsoft.Samples.Kinect.SkeletonBasics
     using System.Net.Sockets;
     using System.Net;
     using System.Text;
+    using System.Threading;
 
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
     public partial class MainWindow : Window
     {
-        IPEndPoint endpoint;
+        static Timer timer;
+        static IPEndPoint endpoint;
         String androidIPAddress = "192.168.43.1";
-        Socket sock;
-        Boolean takeSnapshot = true; 
-        Skeleton savedSkeleton;
+        static Socket sock;
+        static Random random = new Random();
+
+        int timerDelay = 2000;
+        static Boolean sessionStarted = false;
+        static Boolean skeletonVisible = false;
+        static Boolean takeSnapshot = false; 
+        static Skeleton savedSkeleton;
         /// <summary>
         /// Width of output drawing
         /// </summary>
@@ -208,6 +215,9 @@ namespace Microsoft.Samples.Kinect.SkeletonBasics
             endpoint = new IPEndPoint(serverAddr, 8000);
 
             sendValue("The application has been setup!");
+
+            timer = new Timer(TimerCallback, null, timerDelay, timerDelay);
+
         }
 
         /// <summary>
@@ -245,7 +255,7 @@ namespace Microsoft.Samples.Kinect.SkeletonBasics
             {
                 // Draw a transparent background to set the render size
                 dc.DrawRectangle(Brushes.Black, null, new Rect(0.0, 0.0, RenderWidth, RenderHeight));
-
+                skeletonVisible = false;
                 if (skeletons.Length != 0)
                 {
                     foreach (Skeleton skel in skeletons)
@@ -256,9 +266,11 @@ namespace Microsoft.Samples.Kinect.SkeletonBasics
                         if (skel.TrackingState == SkeletonTrackingState.Tracked)
                         {
                             perfectSkeleton = this.DrawBonesAndJoints(skel, dc, false);
+                            skeletonVisible = true;
                         }
                         else if (skel.TrackingState == SkeletonTrackingState.PositionOnly)
                         {
+                            skeletonVisible = true;
                             dc.DrawEllipse(
                             this.centerPointBrush,
                             null,
@@ -427,7 +439,46 @@ namespace Microsoft.Samples.Kinect.SkeletonBasics
             }
         }
 
-        private void sendValue(String text)
+        static int setupSession = 0;
+        static int exerciseProgress = 0;
+
+        private static void TimerCallback(Object o)
+        {
+            //ends the setup attempt
+            if (!sessionStarted && !skeletonVisible) {
+                if (setupSession != 0) { randomizedValue( new string[]{ "We are not done yet.", "Why did you do that?"} ); }
+                setupSession = 0;
+            }
+
+            //attempts a setup for exercise
+           else if (!sessionStarted && skeletonVisible)
+            {
+                if (setupSession == 0) { randomizedValue(new string[] { "Lets do an exercise", "Time to exercise"}); }
+                else if (setupSession == 1) { randomizedValue(new string[] { "Stand back, get ready", "Assume the position" }); }
+                else if (setupSession == 2) { sessionStarted = true; setupSession = 0; }
+                setupSession++;
+            }
+
+            //ends the session
+            else if (sessionStarted && !skeletonVisible)
+            {
+                exerciseProgress = 0;
+                sessionStarted = false;
+                randomizedValue(new string[] { "Wow, did you give up? That is trash.", "Didnt know you were a quitter"});
+            }
+            else if (sessionStarted && skeletonVisible)
+            {
+                if (exerciseProgress == 0) { sendValue("Lets start with arms!"); }
+                exerciseProgress++;
+            }
+        }
+
+        static void randomizedValue(String[] values)
+        {
+            sendValue(values[random.Next(0, values.Length - 1)]);
+        }
+       
+        static void sendValue(String text)
         {
             byte[] send_buffer = Encoding.ASCII.GetBytes(text);
             sock.SendTo(send_buffer, endpoint);
