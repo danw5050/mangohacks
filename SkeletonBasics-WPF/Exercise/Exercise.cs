@@ -13,16 +13,20 @@ namespace Microsoft.Samples.Kinect.SkeletonBasics.Exercises
             this.metrics = metrics;
         }
 
-        public bool isPassing()
+        public bool isGoal()
         {
             foreach (Metric m in this.metrics)
             {
-                if (!m.isPassing())
+                if (!m.isGoal())
                 {
                     return false;
                 }
             }
             return true;
+        }
+
+        public bool compare(SkeletonObject o) {
+
         }
 
         
