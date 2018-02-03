@@ -7,9 +7,8 @@ namespace Microsoft.Samples.Kinect.SkeletonBasics.Exercises
 {
     abstract class Metric
     {
-        public bool isPassing()
-        {
-            return false;
-        }
+        public abstract bool isGoal();
+
+        public abstract bool compare(SkeletonObject s);
     }
 }
