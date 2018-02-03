@@ -1,3 +1,3 @@
-KinectPT
+##Project Title
 
-MangoHacks 2018
+One Paragraph of project description goes here
