@@ -10,6 +10,7 @@ namespace Microsoft.Samples.Kinect.SkeletonBasics
     using System.Windows;
     using System.Windows.Media;
     using Microsoft.Kinect;
+    using System;
 
     /// <summary>
     /// Interaction logic for MainWindow.xaml
@@ -369,6 +370,16 @@ namespace Microsoft.Samples.Kinect.SkeletonBasics
                 {
                     this.sensor.SkeletonStream.TrackingMode = SkeletonTrackingMode.Default;
                 }
+            }
+        }
+
+        private void angleButton_Click(object sender, RoutedEventArgs e)
+        {
+            int number;
+            bool result = Int32.TryParse(angleInput.Text, out number);
+            if (result)
+            {
+                sensor.ElevationAngle = number;
             }
         }
     }
