@@ -61,9 +61,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="Exercise\Metric\RightArmLift.cs" />
-    <Compile Include="Exercise\Exercise.cs" />
-    <Compile Include="Exercise\Metric\Metric.cs" />
+    <Compile Include="Metric\AngleMetric.cs" />
+    <Compile Include="Metric\impl\LeftArmLift.cs" />
+    <Compile Include="Metric\impl\RightArmLift.cs" />
+    <Compile Include="Metric\Metric.cs" />
     <Compile Include="SkeletonObject.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
