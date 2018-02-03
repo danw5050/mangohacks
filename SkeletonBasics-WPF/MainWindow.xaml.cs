@@ -15,6 +15,7 @@ namespace Microsoft.Samples.Kinect.SkeletonBasics
     using System.Net;
     using System.Text;
     using System.Threading;
+    using System.Windows.Media.Imaging;
 
     /// <summary>
     /// Interaction logic for MainWindow.xaml
@@ -98,6 +99,16 @@ namespace Microsoft.Samples.Kinect.SkeletonBasics
         /// Drawing image that we will display
         /// </summary>
         private DrawingImage imageSource;
+
+        /// <summary>
+        /// Bitmap that will hold color information
+        /// </summary>
+        private WriteableBitmap colorBitmap;
+
+        /// <summary>
+        /// Intermediate storage for the color data received from the camera
+        /// </summary>
+        private byte[] colorPixels;
 
         /// <summary>
         /// Initializes a new instance of the MainWindow class.
@@ -192,6 +203,30 @@ namespace Microsoft.Samples.Kinect.SkeletonBasics
                 // Add an event handler to be called whenever there is new color frame data
                 this.sensor.SkeletonFrameReady += this.SensorSkeletonFrameReady;
 
+
+
+                //prepare everything for video streaming
+                // Turn on the color stream to receive color frames
+                this.sensor.ColorStream.Enable(ColorImageFormat.RgbResolution640x480Fps30);
+
+                // Allocate space to put the pixels we'll receive
+                this.colorPixels = new byte[this.sensor.ColorStream.FramePixelDataLength];
+
+                // This is the bitmap we'll display on-screen
+                this.colorBitmap = new WriteableBitmap(this.sensor.ColorStream.FrameWidth, this.sensor.ColorStream.FrameHeight, 96.0, 96.0, PixelFormats.Bgr32, null);
+
+                // Set the image we display to point to the bitmap where we'll put the image data
+                this.Image2.Source = this.colorBitmap;
+
+                // Add an event handler to be called whenever there is new color frame data
+                this.sensor.ColorFrameReady += this.SensorColorFrameReady;
+
+
+
+
+
+
+
                 // Start the sensor!
                 try
                 {
@@ -219,6 +254,30 @@ namespace Microsoft.Samples.Kinect.SkeletonBasics
             timer = new Timer(TimerCallback, null, timerDelay, timerDelay);
 
         }
+
+
+
+        private void SensorColorFrameReady(object sender, ColorImageFrameReadyEventArgs e)
+        {
+            using (ColorImageFrame colorFrame = e.OpenColorImageFrame())
+            {
+                if (colorFrame != null)
+                {
+                    // Copy the pixel data from the image to a temporary array
+                    colorFrame.CopyPixelDataTo(this.colorPixels);
+
+                    // Write the pixel data into our bitmap
+                    this.colorBitmap.WritePixels(
+                        new Int32Rect(0, 0, this.colorBitmap.PixelWidth, this.colorBitmap.PixelHeight),
+                        this.colorPixels,
+                        this.colorBitmap.PixelWidth * sizeof(int),
+                        0);
+                }
+            }
+        }
+
+
+
 
         /// <summary>
         /// Execute shutdown tasks
@@ -254,7 +313,7 @@ namespace Microsoft.Samples.Kinect.SkeletonBasics
             using (DrawingContext dc = this.drawingGroup.Open())
             {
                 // Draw a transparent background to set the render size
-                dc.DrawRectangle(Brushes.Black, null, new Rect(0.0, 0.0, RenderWidth, RenderHeight));
+                //dc.DrawRectangle(Brushes.Black, null, new Rect(0.0, 0.0, RenderWidth, RenderHeight));
                 skeletonVisible = false;
                 if (skeletons.Length != 0)
                 {
@@ -294,6 +353,8 @@ namespace Microsoft.Samples.Kinect.SkeletonBasics
 
                 // prevent drawing outside of our render area
                 this.drawingGroup.ClipGeometry = new RectangleGeometry(new Rect(0.0, 0.0, RenderWidth, RenderHeight));
+                
+                this.drawingGroup.Opacity = 1;
             }
         }
 
