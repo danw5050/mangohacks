@@ -11,13 +11,18 @@ namespace Microsoft.Samples.Kinect.SkeletonBasics
     using System.Windows.Media;
     using Microsoft.Kinect;
     using System;
+    using System.Net.Sockets;
+    using System.Net;
+    using System.Text;
 
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
     public partial class MainWindow : Window
     {
-
+        IPEndPoint endpoint;
+        String androidIPAddress = "192.168.43.1";
+        Socket sock;
         Boolean takeSnapshot = true; 
         Skeleton savedSkeleton;
         /// <summary>
@@ -195,6 +200,14 @@ namespace Microsoft.Samples.Kinect.SkeletonBasics
             {
                 this.statusBarText.Text = Properties.Resources.NoKinectReady;
             }
+
+
+            //set up for android communication
+            sock = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
+            IPAddress serverAddr = IPAddress.Parse(androidIPAddress);
+            endpoint = new IPEndPoint(serverAddr, 8000);
+
+            sendValue("You can do it, keep holding up those sexy arms!");
         }
 
         /// <summary>
@@ -412,6 +425,12 @@ namespace Microsoft.Samples.Kinect.SkeletonBasics
             {
                 sensor.ElevationAngle = number;
             }
+        }
+
+        private void sendValue(String text)
+        {
+            byte[] send_buffer = Encoding.ASCII.GetBytes(text);
+            sock.SendTo(send_buffer, endpoint);
         }
     }
 }
