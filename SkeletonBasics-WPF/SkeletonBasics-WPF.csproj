@@ -62,9 +62,11 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="Metric\AngleMetric.cs" />
+    <Compile Include="Metric\DistanceMetric.cs" />
     <Compile Include="Metric\impl\LeftArmLift.cs" />
     <Compile Include="Metric\impl\LeftLegLift.cs" />
     <Compile Include="Metric\impl\RightArmLift.cs" />
+    <Compile Include="Metric\impl\ShrugShoulders.cs" />
     <Compile Include="Metric\Metric.cs" />
     <Compile Include="SkeletonObject.cs" />
     <Page Include="MainWindow.xaml">
