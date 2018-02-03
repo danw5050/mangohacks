@@ -15,8 +15,8 @@ namespace Microsoft.Samples.Kinect.SkeletonBasics
     using System.Net;
     using System.Text;
     using System.Threading;
-    using Exercises;
     using System.Windows.Media.Imaging;
+    using Metric;
 
     /// <summary>
     /// Interaction logic for MainWindow.xaml
@@ -322,14 +322,20 @@ namespace Microsoft.Samples.Kinect.SkeletonBasics
                     {
                         Boolean skeletonClipped = RenderClippedEdges(skel, dc);
                         Boolean perfectSkeleton = false;
-                        Metric m = new RightArmLift(skel, 110);
-                        if (m.isGoal())
-                            Console.WriteLine("Goal Achieved!");
 
                         if (skel.TrackingState == SkeletonTrackingState.Tracked)
                         {
+
+                            AngleMetric rightM = new RightArmLift(skel, 110);
+                            Console.WriteLine($"Right Arm Angle: {rightM.getAngle().ToString("0.000")}");
+
                             perfectSkeleton = this.DrawBonesAndJoints(skel, dc, false);
                             skeletonVisible = true;
+
+                            if (perfectSkeleton && (savedSkeleton == null || rightM.compare(savedSkeleton))) {
+                                takeSnapshot = false;
+                                savedSkeleton = skel;
+                            }
                         }
                         else if (skel.TrackingState == SkeletonTrackingState.PositionOnly)
                         {
@@ -342,11 +348,6 @@ namespace Microsoft.Samples.Kinect.SkeletonBasics
                             BodyCenterThickness);
                         }
 
-                        if (takeSnapshot && !skeletonClipped && perfectSkeleton)
-                        {
-                            takeSnapshot = false;
-                            savedSkeleton = skel;
-                        }
                     }
 
                     if (savedSkeleton != null)

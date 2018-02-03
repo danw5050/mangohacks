@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using Microsoft.Kinect;
 
-namespace Microsoft.Samples.Kinect.SkeletonBasics.Exercises
+namespace Microsoft.Samples.Kinect.SkeletonBasics.Metric
 {
     abstract class Metric
     {
