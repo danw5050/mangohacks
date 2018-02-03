@@ -12,3 +12,17 @@ C:\Users\Dan\Documents\GitHub\mangohacks\SkeletonBasics-WPF\obj\Debug\SkeletonBa
 C:\Users\Dan\Documents\GitHub\mangohacks\SkeletonBasics-WPF\obj\Debug\SkeletonBasics-WPF.exe
 C:\Users\Dan\Documents\GitHub\mangohacks\SkeletonBasics-WPF\obj\Debug\SkeletonBasics-WPF.pdb
 C:\Users\Dan\Documents\GitHub\mangohacks\SkeletonBasics-WPF\obj\Debug\SkeletonBasics-WPF.csprojResolveAssemblyReference.cache
+C:\Users\Nick\Documents\mangohacks\SkeletonBasics-WPF\obj\Debug\SkeletonBasics-WPF.exe
+C:\Users\Nick\Documents\mangohacks\SkeletonBasics-WPF\obj\Debug\SkeletonBasics-WPF.pdb
+C:\Users\Nick\Documents\mangohacks\SkeletonBasics-WPF\bin\Debug\SkeletonBasics-WPF.exe
+C:\Users\Nick\Documents\mangohacks\SkeletonBasics-WPF\bin\Debug\SkeletonBasics-WPF.pdb
+C:\Users\Nick\Documents\mangohacks\SkeletonBasics-WPF\bin\Debug\Microsoft.Kinect.dll
+C:\Users\Nick\Documents\mangohacks\SkeletonBasics-WPF\bin\Debug\Microsoft.Kinect.xml
+C:\Users\Nick\Documents\mangohacks\SkeletonBasics-WPF\obj\Debug\SkeletonBasics-WPF.csprojResolveAssemblyReference.cache
+C:\Users\Nick\Documents\mangohacks\SkeletonBasics-WPF\obj\Debug\MainWindow.baml
+C:\Users\Nick\Documents\mangohacks\SkeletonBasics-WPF\obj\Debug\MainWindow.g.cs
+C:\Users\Nick\Documents\mangohacks\SkeletonBasics-WPF\obj\Debug\App.g.cs
+C:\Users\Nick\Documents\mangohacks\SkeletonBasics-WPF\obj\Debug\SkeletonBasics-WPF_MarkupCompile.cache
+C:\Users\Nick\Documents\mangohacks\SkeletonBasics-WPF\obj\Debug\SkeletonBasics-WPF.g.resources
+C:\Users\Nick\Documents\mangohacks\SkeletonBasics-WPF\obj\Debug\Microsoft.Samples.Kinect.SkeletonBasics.Properties.Resources.resources
+C:\Users\Nick\Documents\mangohacks\SkeletonBasics-WPF\obj\Debug\SkeletonBasics-WPF.csproj.GenerateResource.Cache
