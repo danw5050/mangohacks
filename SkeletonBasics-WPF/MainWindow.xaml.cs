@@ -318,6 +318,7 @@ namespace Microsoft.Samples.Kinect.SkeletonBasics
                 //dc.DrawRectangle(Brushes.Black, null, new Rect(0.0, 0.0, RenderWidth, RenderHeight));
                 skeletonVisible = false;
                 perfectSkeleton = false;
+                Metric.Metric metric = new RightArmLift(new Skeleton(), 100);
                 if (skeletons.Length != 0)
                 {
                     foreach (Skeleton skel in skeletons)
@@ -328,13 +329,12 @@ namespace Microsoft.Samples.Kinect.SkeletonBasics
                         if (skel.TrackingState == SkeletonTrackingState.Tracked)
                         {
 
-                            AngleMetric rightM = new RightArmLift(skel, 110);
-                            Console.WriteLine($"Right Arm Angle: {rightM.getAngle().ToString("0.000")}");
+                            metric.setSkeleton(skel);
 
                             perfectSkeleton = this.DrawBonesAndJoints(skel, dc, false);
                             skeletonVisible = true;
 
-                            if (takeSnapshot && perfectSkeleton && (savedSkeleton == null || rightM.compare(savedSkeleton ))) {
+                            if (takeSnapshot && perfectSkeleton && (savedSkeleton == null || metric.compare(savedSkeleton ))) {
                                
                                 savedSkeleton = skel;
                             }

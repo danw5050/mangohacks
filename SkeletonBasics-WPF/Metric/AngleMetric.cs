@@ -7,11 +7,9 @@ using System.Windows.Media.Media3D;
 
 namespace Microsoft.Samples.Kinect.SkeletonBasics.Metric {
     abstract class AngleMetric : Metric {
-        protected Skeleton skeleton;
         protected double goalAngle;
 
-        public AngleMetric(Skeleton skeleton, double goalAngle) {
-            this.skeleton = skeleton;
+        public AngleMetric(Skeleton skeleton, double goalAngle) : base(skeleton) {
             this.goalAngle = goalAngle;
         }
 
@@ -20,7 +18,6 @@ namespace Microsoft.Samples.Kinect.SkeletonBasics.Metric {
         public bool isGoal() {
             SkeletonObject o = new SkeletonObject(this.skeleton);
             double angle = getAngle(o);
-            Console.WriteLine($"Current angle: {angle}");
             return angle > this.goalAngle;
         }
 
