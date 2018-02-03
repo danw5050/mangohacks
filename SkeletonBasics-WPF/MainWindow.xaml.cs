@@ -207,7 +207,7 @@ namespace Microsoft.Samples.Kinect.SkeletonBasics
             IPAddress serverAddr = IPAddress.Parse(androidIPAddress);
             endpoint = new IPEndPoint(serverAddr, 8000);
 
-            sendValue("You can do it, keep holding up those sexy arms!");
+            sendValue("The application has been setup!");
         }
 
         /// <summary>
