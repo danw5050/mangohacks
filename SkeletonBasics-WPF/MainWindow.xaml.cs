@@ -327,11 +327,15 @@ namespace Microsoft.Samples.Kinect.SkeletonBasics
                         {
 
                             AngleMetric rightM = new RightArmLift(skel, 110);
-                            AngleMetric leftM = new LeftArmLift(skel, 110);
-                            Console.WriteLine($"Left Arm Angle: {leftM.getAngle()}               Right Arm Angle: {rightM.getAngle()}");
+                            Console.WriteLine($"Right Arm Angle: {rightM.getAngle().ToString("0.000")}");
 
                             perfectSkeleton = this.DrawBonesAndJoints(skel, dc, false);
                             skeletonVisible = true;
+
+                            if (perfectSkeleton && (savedSkeleton == null || rightM.compare(savedSkeleton))) {
+                                takeSnapshot = false;
+                                savedSkeleton = skel;
+                            }
                         }
                         else if (skel.TrackingState == SkeletonTrackingState.PositionOnly)
                         {
@@ -344,11 +348,6 @@ namespace Microsoft.Samples.Kinect.SkeletonBasics
                             BodyCenterThickness);
                         }
 
-                        if (takeSnapshot && !skeletonClipped && perfectSkeleton)
-                        {
-                            takeSnapshot = false;
-                            savedSkeleton = skel;
-                        }
                     }
 
                     if (savedSkeleton != null)
