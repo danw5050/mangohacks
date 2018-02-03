@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Microsoft.Kinect;
 
 namespace Microsoft.Samples.Kinect.SkeletonBasics.Exercises
 {
@@ -25,8 +26,8 @@ namespace Microsoft.Samples.Kinect.SkeletonBasics.Exercises
             return true;
         }
 
-        public bool compare(SkeletonObject o) {
-
+        public bool compare(Skeleton o) {
+            return false;
         }
 
         

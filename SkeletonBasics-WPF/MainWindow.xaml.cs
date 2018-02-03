@@ -15,6 +15,7 @@ namespace Microsoft.Samples.Kinect.SkeletonBasics
     using System.Net;
     using System.Text;
     using System.Threading;
+    using Exercises;
 
     /// <summary>
     /// Interaction logic for MainWindow.xaml
@@ -262,6 +263,9 @@ namespace Microsoft.Samples.Kinect.SkeletonBasics
                     {
                         Boolean skeletonClipped = RenderClippedEdges(skel, dc);
                         Boolean perfectSkeleton = false;
+                        Metric m = new RightArmLift(skel, 110);
+                        if (m.isGoal())
+                            Console.WriteLine("Goal Achieved!");
 
                         if (skel.TrackingState == SkeletonTrackingState.Tracked)
                         {
