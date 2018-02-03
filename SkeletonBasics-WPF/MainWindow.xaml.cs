@@ -17,6 +17,9 @@ namespace Microsoft.Samples.Kinect.SkeletonBasics
     /// </summary>
     public partial class MainWindow : Window
     {
+
+        Boolean takeSnapshot = true; 
+        Skeleton savedSkeleton;
         /// <summary>
         /// Width of output drawing
         /// </summary>
@@ -67,6 +70,8 @@ namespace Microsoft.Samples.Kinect.SkeletonBasics
         /// </summary>        
         private readonly Pen inferredBonePen = new Pen(Brushes.Gray, 1);
 
+        private readonly Pen savedSkeletonPen = new Pen(Brushes.Blue, 3);
+
         /// <summary>
         /// Active Kinect sensor
         /// </summary>
@@ -95,10 +100,13 @@ namespace Microsoft.Samples.Kinect.SkeletonBasics
         /// </summary>
         /// <param name="skeleton">skeleton to draw clipping information for</param>
         /// <param name="drawingContext">drawing context to draw to</param>
-        private static void RenderClippedEdges(Skeleton skeleton, DrawingContext drawingContext)
+        private static Boolean RenderClippedEdges(Skeleton skeleton, DrawingContext drawingContext)
         {
+            Boolean clippedSkeleton = false;
+
             if (skeleton.ClippedEdges.HasFlag(FrameEdges.Bottom))
             {
+                clippedSkeleton = true;
                 drawingContext.DrawRectangle(
                     Brushes.Red,
                     null,
@@ -107,6 +115,7 @@ namespace Microsoft.Samples.Kinect.SkeletonBasics
 
             if (skeleton.ClippedEdges.HasFlag(FrameEdges.Top))
             {
+                clippedSkeleton = true;
                 drawingContext.DrawRectangle(
                     Brushes.Red,
                     null,
@@ -115,6 +124,7 @@ namespace Microsoft.Samples.Kinect.SkeletonBasics
 
             if (skeleton.ClippedEdges.HasFlag(FrameEdges.Left))
             {
+                clippedSkeleton = true;
                 drawingContext.DrawRectangle(
                     Brushes.Red,
                     null,
@@ -123,11 +133,14 @@ namespace Microsoft.Samples.Kinect.SkeletonBasics
 
             if (skeleton.ClippedEdges.HasFlag(FrameEdges.Right))
             {
+                clippedSkeleton = true;
                 drawingContext.DrawRectangle(
                     Brushes.Red,
                     null,
                     new Rect(RenderWidth - ClipBoundsThickness, 0, ClipBoundsThickness, RenderHeight));
             }
+
+            return clippedSkeleton;
         }
 
         /// <summary>
@@ -224,11 +237,12 @@ namespace Microsoft.Samples.Kinect.SkeletonBasics
                 {
                     foreach (Skeleton skel in skeletons)
                     {
-                        RenderClippedEdges(skel, dc);
+                        Boolean skeletonClipped = RenderClippedEdges(skel, dc);
+                        Boolean perfectSkeleton = false;
 
                         if (skel.TrackingState == SkeletonTrackingState.Tracked)
                         {
-                            this.DrawBonesAndJoints(skel, dc);
+                            perfectSkeleton = this.DrawBonesAndJoints(skel, dc, false);
                         }
                         else if (skel.TrackingState == SkeletonTrackingState.PositionOnly)
                         {
@@ -239,6 +253,17 @@ namespace Microsoft.Samples.Kinect.SkeletonBasics
                             BodyCenterThickness,
                             BodyCenterThickness);
                         }
+
+                        if (takeSnapshot && !skeletonClipped && perfectSkeleton)
+                        {
+                            takeSnapshot = false;
+                            savedSkeleton = skel;
+                        }
+                    }
+
+                    if (savedSkeleton != null)
+                    {
+                        this.DrawBonesAndJoints(savedSkeleton, dc, true);
                     }
                 }
 
@@ -252,36 +277,38 @@ namespace Microsoft.Samples.Kinect.SkeletonBasics
         /// </summary>
         /// <param name="skeleton">skeleton to draw</param>
         /// <param name="drawingContext">drawing context to draw to</param>
-        private void DrawBonesAndJoints(Skeleton skeleton, DrawingContext drawingContext)
+        private Boolean DrawBonesAndJoints(Skeleton skeleton, DrawingContext drawingContext, bool savedSkeletonDrawing)
         {
+            Boolean perfectSkeleton = true;
+
             // Render Torso
-            this.DrawBone(skeleton, drawingContext, JointType.Head, JointType.ShoulderCenter);
-            this.DrawBone(skeleton, drawingContext, JointType.ShoulderCenter, JointType.ShoulderLeft);
-            this.DrawBone(skeleton, drawingContext, JointType.ShoulderCenter, JointType.ShoulderRight);
-            this.DrawBone(skeleton, drawingContext, JointType.ShoulderCenter, JointType.Spine);
-            this.DrawBone(skeleton, drawingContext, JointType.Spine, JointType.HipCenter);
-            this.DrawBone(skeleton, drawingContext, JointType.HipCenter, JointType.HipLeft);
-            this.DrawBone(skeleton, drawingContext, JointType.HipCenter, JointType.HipRight);
+            this.DrawBone(skeleton, drawingContext, JointType.Head, JointType.ShoulderCenter, savedSkeletonDrawing);
+            this.DrawBone(skeleton, drawingContext, JointType.ShoulderCenter, JointType.ShoulderLeft, savedSkeletonDrawing);
+            this.DrawBone(skeleton, drawingContext, JointType.ShoulderCenter, JointType.ShoulderRight, savedSkeletonDrawing);
+            this.DrawBone(skeleton, drawingContext, JointType.ShoulderCenter, JointType.Spine, savedSkeletonDrawing);
+            this.DrawBone(skeleton, drawingContext, JointType.Spine, JointType.HipCenter, savedSkeletonDrawing);
+            this.DrawBone(skeleton, drawingContext, JointType.HipCenter, JointType.HipLeft, savedSkeletonDrawing);
+            this.DrawBone(skeleton, drawingContext, JointType.HipCenter, JointType.HipRight, savedSkeletonDrawing);
 
             // Left Arm
-            this.DrawBone(skeleton, drawingContext, JointType.ShoulderLeft, JointType.ElbowLeft);
-            this.DrawBone(skeleton, drawingContext, JointType.ElbowLeft, JointType.WristLeft);
-            this.DrawBone(skeleton, drawingContext, JointType.WristLeft, JointType.HandLeft);
+            this.DrawBone(skeleton, drawingContext, JointType.ShoulderLeft, JointType.ElbowLeft, savedSkeletonDrawing);
+            this.DrawBone(skeleton, drawingContext, JointType.ElbowLeft, JointType.WristLeft, savedSkeletonDrawing);
+            this.DrawBone(skeleton, drawingContext, JointType.WristLeft, JointType.HandLeft, savedSkeletonDrawing);
 
             // Right Arm
-            this.DrawBone(skeleton, drawingContext, JointType.ShoulderRight, JointType.ElbowRight);
-            this.DrawBone(skeleton, drawingContext, JointType.ElbowRight, JointType.WristRight);
-            this.DrawBone(skeleton, drawingContext, JointType.WristRight, JointType.HandRight);
+            this.DrawBone(skeleton, drawingContext, JointType.ShoulderRight, JointType.ElbowRight, savedSkeletonDrawing);
+            this.DrawBone(skeleton, drawingContext, JointType.ElbowRight, JointType.WristRight, savedSkeletonDrawing);
+            this.DrawBone(skeleton, drawingContext, JointType.WristRight, JointType.HandRight, savedSkeletonDrawing);
 
             // Left Leg
-            this.DrawBone(skeleton, drawingContext, JointType.HipLeft, JointType.KneeLeft);
-            this.DrawBone(skeleton, drawingContext, JointType.KneeLeft, JointType.AnkleLeft);
-            this.DrawBone(skeleton, drawingContext, JointType.AnkleLeft, JointType.FootLeft);
+            this.DrawBone(skeleton, drawingContext, JointType.HipLeft, JointType.KneeLeft, savedSkeletonDrawing);
+            this.DrawBone(skeleton, drawingContext, JointType.KneeLeft, JointType.AnkleLeft, savedSkeletonDrawing);
+            this.DrawBone(skeleton, drawingContext, JointType.AnkleLeft, JointType.FootLeft, savedSkeletonDrawing);
 
             // Right Leg
-            this.DrawBone(skeleton, drawingContext, JointType.HipRight, JointType.KneeRight);
-            this.DrawBone(skeleton, drawingContext, JointType.KneeRight, JointType.AnkleRight);
-            this.DrawBone(skeleton, drawingContext, JointType.AnkleRight, JointType.FootRight);
+            this.DrawBone(skeleton, drawingContext, JointType.HipRight, JointType.KneeRight, savedSkeletonDrawing);
+            this.DrawBone(skeleton, drawingContext, JointType.KneeRight, JointType.AnkleRight, savedSkeletonDrawing);
+            this.DrawBone(skeleton, drawingContext, JointType.AnkleRight, JointType.FootRight, savedSkeletonDrawing);
  
             // Render Joints
             foreach (Joint joint in skeleton.Joints)
@@ -294,7 +321,8 @@ namespace Microsoft.Samples.Kinect.SkeletonBasics
                 }
                 else if (joint.TrackingState == JointTrackingState.Inferred)
                 {
-                    drawBrush = this.inferredJointBrush;                    
+                    drawBrush = this.inferredJointBrush;
+                    perfectSkeleton = false;                
                 }
 
                 if (drawBrush != null)
@@ -302,6 +330,8 @@ namespace Microsoft.Samples.Kinect.SkeletonBasics
                     drawingContext.DrawEllipse(drawBrush, null, this.SkeletonPointToScreen(joint.Position), JointThickness, JointThickness);
                 }
             }
+
+            return perfectSkeleton;
         }
 
         /// <summary>
@@ -324,7 +354,7 @@ namespace Microsoft.Samples.Kinect.SkeletonBasics
         /// <param name="drawingContext">drawing context to draw to</param>
         /// <param name="jointType0">joint to start drawing from</param>
         /// <param name="jointType1">joint to end drawing at</param>
-        private void DrawBone(Skeleton skeleton, DrawingContext drawingContext, JointType jointType0, JointType jointType1)
+        private void DrawBone(Skeleton skeleton, DrawingContext drawingContext, JointType jointType0, JointType jointType1, Boolean savedSkeletonDrawing)
         {
             Joint joint0 = skeleton.Joints[jointType0];
             Joint joint1 = skeleton.Joints[jointType1];
@@ -349,6 +379,7 @@ namespace Microsoft.Samples.Kinect.SkeletonBasics
             {
                 drawPen = this.trackedBonePen;
             }
+            drawPen = savedSkeletonDrawing ? savedSkeletonPen : drawPen;
 
             drawingContext.DrawLine(drawPen, this.SkeletonPointToScreen(joint0.Position), this.SkeletonPointToScreen(joint1.Position));
         }
