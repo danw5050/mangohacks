@@ -32,6 +32,7 @@ namespace Microsoft.Samples.Kinect.SkeletonBasics
         int timerDelay = 2000;
         static Boolean sessionStarted = false;
         static Boolean skeletonVisible = false;
+        static Boolean perfectSkeleton = false;
         static Boolean takeSnapshot = false; 
         static Skeleton savedSkeleton;
         /// <summary>
@@ -316,12 +317,13 @@ namespace Microsoft.Samples.Kinect.SkeletonBasics
                 // Draw a transparent background to set the render size
                 //dc.DrawRectangle(Brushes.Black, null, new Rect(0.0, 0.0, RenderWidth, RenderHeight));
                 skeletonVisible = false;
+                perfectSkeleton = false;
                 if (skeletons.Length != 0)
                 {
                     foreach (Skeleton skel in skeletons)
                     {
                         Boolean skeletonClipped = RenderClippedEdges(skel, dc);
-                        Boolean perfectSkeleton = false;
+                        
 
                         if (skel.TrackingState == SkeletonTrackingState.Tracked)
                         {
@@ -332,8 +334,8 @@ namespace Microsoft.Samples.Kinect.SkeletonBasics
                             perfectSkeleton = this.DrawBonesAndJoints(skel, dc, false);
                             skeletonVisible = true;
 
-                            if (perfectSkeleton && (savedSkeleton == null || rightM.compare(savedSkeleton))) {
-                                takeSnapshot = false;
+                            if (takeSnapshot && perfectSkeleton && (savedSkeleton == null || rightM.compare(savedSkeleton ))) {
+                               
                                 savedSkeleton = skel;
                             }
                         }
@@ -507,6 +509,7 @@ namespace Microsoft.Samples.Kinect.SkeletonBasics
 
         static int setupSession = 0;
         static int exerciseProgress = 0;
+        static Boolean good2go = false;
 
         private static void TimerCallback(Object o)
         {
@@ -520,14 +523,25 @@ namespace Microsoft.Samples.Kinect.SkeletonBasics
            else if (!sessionStarted && skeletonVisible)
             {
                 if (setupSession == 0) { randomizedValue(new string[] { "Lets do an exercise", "Time to exercise"}); }
-                else if (setupSession == 1) { randomizedValue(new string[] { "Stand back, get ready", "Assume the position" }); }
-                else if (setupSession == 2) { sessionStarted = true; setupSession = 0; }
+                else if (setupSession == 1) { sendValue("Stand perfectly still"); }
+
+                //wait until the skeleton is perfect
+                if (perfectSkeleton && setupSession > 1) {
+                    if (good2go)
+                    {
+                        sessionStarted = true; setupSession = 0;
+                    } else
+                    {
+                        good2go = true;
+                    }
+                }
                 setupSession++;
             }
 
             //ends the session
             else if (sessionStarted && !skeletonVisible)
             {
+                takeSnapshot = false;
                 exerciseProgress = 0;
                 sessionStarted = false;
                 randomizedValue(new string[] { "Wow, did you give up? That is trash.", "Didnt know you were a quitter"});
@@ -535,13 +549,18 @@ namespace Microsoft.Samples.Kinect.SkeletonBasics
             else if (sessionStarted && skeletonVisible)
             {
                 if (exerciseProgress == 0) { sendValue("Lets start with arms!"); }
+                if (exerciseProgress == 1) { sendValue("Raise your right arm"); }
+                if (exerciseProgress == 2) { sendValue("Keep your arm straight"); takeSnapshot = true; }
+                if (exerciseProgress == 3) { sendValue("Hold it, Im analyzing"); }
+                if (exerciseProgress == 4) { sendValue("Keep holding"); }
+                if (exerciseProgress == 6) { sendValue("Great job, put it down"); takeSnapshot = false; }
                 exerciseProgress++;
             }
         }
 
         static void randomizedValue(String[] values)
         {
-            sendValue(values[random.Next(0, values.Length - 1)]);
+            sendValue(values[random.Next(0, values.Length)]);
         }
        
         static void sendValue(String text)
