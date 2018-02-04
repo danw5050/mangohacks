@@ -8,8 +8,7 @@ namespace Microsoft.Samples.Kinect.SkeletonBasics.Metric
 {
     class ShrugShoulders : DistanceMetric
     {
-        public ShrugShoulders(Skeleton skeleton, double goalDistance) : base(skeleton, goalDistance)
-        {
+        public ShrugShoulders(Skeleton skeleton, double goalDistance) : base(skeleton, goalDistance) {
         }
 
         public override double getDistance(SkeletonObject o)
@@ -18,6 +17,11 @@ namespace Microsoft.Samples.Kinect.SkeletonBasics.Metric
             double neckHeight = o.ShoulderCenter.y;
 
             return shoulderHeight - neckHeight;
+        }
+
+        public override string getMetricName()
+        {
+            return "ShrugShoulders";
         }
     }
 }

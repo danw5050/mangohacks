@@ -43,5 +43,10 @@ namespace Microsoft.Samples.Kinect.SkeletonBasics.Metric {
 
             return Vector3D.AngleBetween(v1, v2);
         }
+
+        public override double getMetric()
+        {
+            return this.getAngle();
+        }
     }
 }

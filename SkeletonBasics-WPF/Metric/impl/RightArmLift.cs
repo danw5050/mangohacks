@@ -9,9 +9,13 @@ namespace Microsoft.Samples.Kinect.SkeletonBasics.Metric
 {
     class RightArmLift : AngleMetric
     {
-        const String MetricName = "RightArmLift";
 
         public RightArmLift(Skeleton skeleton, double goalAngle) : base(skeleton, goalAngle) {
+        }
+
+        public override string getMetricName()
+        {
+            return "RightArmLift";
         }
 
         protected override double getAngle(SkeletonObject o) {

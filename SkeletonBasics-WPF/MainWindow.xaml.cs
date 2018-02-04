@@ -25,7 +25,7 @@ namespace Microsoft.Samples.Kinect.SkeletonBasics
     {
         static Timer timer;
         static IPEndPoint endpoint;
-        String androidIPAddress = "192.168.43.1";
+        String androidIPAddress = "172.20.10.5";
         static Socket sock;
         static Random random = new Random();
 
@@ -35,6 +35,7 @@ namespace Microsoft.Samples.Kinect.SkeletonBasics
         static Boolean perfectSkeleton = false;
         static Boolean takeSnapshot = false;
         static Skeleton savedSkeleton;
+        static Metric.Metric metric;
         /// <summary>
         /// Width of output drawing
         /// </summary>
@@ -223,12 +224,6 @@ namespace Microsoft.Samples.Kinect.SkeletonBasics
                 // Add an event handler to be called whenever there is new color frame data
                 this.sensor.ColorFrameReady += this.SensorColorFrameReady;
 
-
-
-
-
-
-
                 // Start the sensor!
                 try
                 {
@@ -254,8 +249,6 @@ namespace Microsoft.Samples.Kinect.SkeletonBasics
             sendValue("The application has been setup!");
 
             timer = new Timer(TimerCallback, null, timerDelay, timerDelay);
-
-            sendToFireBase("TestMetric", 98.394f);
         }
 
 
@@ -320,7 +313,7 @@ namespace Microsoft.Samples.Kinect.SkeletonBasics
                 // skeletonVisible = false;
                 Boolean skeletonVisibleTemp = false;
                 perfectSkeleton = false;
-                Metric.Metric metric = new ShrugShoulders(new Skeleton(), 100);
+                
                 if (skeletons.Length != 0)
                 {
                     foreach (Skeleton skel in skeletons)
@@ -330,8 +323,8 @@ namespace Microsoft.Samples.Kinect.SkeletonBasics
 
                         if (skel.TrackingState == SkeletonTrackingState.Tracked)
                         {
-
-                            metric.setSkeleton(skel);
+                            if (metric != null)
+                                metric.setSkeleton(skel);
 
                             perfectSkeleton = this.DrawBonesAndJoints(skel, dc, false);
                             skeletonVisibleTemp = true;
@@ -514,11 +507,17 @@ namespace Microsoft.Samples.Kinect.SkeletonBasics
         static int setupSession = 0;
         static int exerciseProgress = 0;
         static Boolean good2go = false;
+        static Boolean endSession = false;
 
         private static void TimerCallback(Object o)
         {
+            if (endSession)
+            {
+                endSession = skeletonVisible;
+                setupSession = 0;
+            }
             //ends the setup attempt
-            if (!sessionStarted && !skeletonVisible) {
+            else if (!sessionStarted && !skeletonVisible) {
                 if (setupSession != 0) { randomizedValue(new string[] { "We are not done yet.", "Why did you do that?" }); }
                 setupSession = 0;
             }
@@ -552,12 +551,47 @@ namespace Microsoft.Samples.Kinect.SkeletonBasics
             }
             else if (sessionStarted && skeletonVisible)
             {
-                if (exerciseProgress == 0) { sendValue("Lets start with arms!"); }
-                if (exerciseProgress == 1) { sendValue("Raise your right arm"); }
-                if (exerciseProgress == 2) { sendValue("Keep your arm straight"); takeSnapshot = true; }
-                if (exerciseProgress == 3) { sendValue("Hold it, I am analyzing"); }
-                if (exerciseProgress == 4) { sendValue("Keep holding"); }
-                if (exerciseProgress == 6) { sendValue("Great job, put it down"); takeSnapshot = false; }
+                if (exerciseProgress == 0) { sendValue("Lets start with arms!"); metric = new RightArmLift(new Skeleton(), 100); }
+                else if (exerciseProgress == 1) { sendValue("Raise your right arm"); }
+                else if (exerciseProgress == 2) { sendValue("Keep your arm straight"); takeSnapshot = true; }
+                else if (exerciseProgress == 3) { sendValue("Hold it, I am analyzing"); }
+                else if (exerciseProgress == 4) { sendValue("Keep holding"); }
+                else if (exerciseProgress == 6)
+                {
+                    sendValue("Great job, put it down");
+                    takeSnapshot = false;
+                    metric.setSkeleton(savedSkeleton);
+                    sendToFireBase(metric.getMetricName(), metric.getMetric());
+                }
+                else if (exerciseProgress == 8) { sendValue("Lets move onto your left leg"); metric = new LeftLegLift(new Skeleton(), 100); savedSkeleton = null; }
+                else if (exerciseProgress == 9) { sendValue("Move your leg to the side"); takeSnapshot = true; }
+                else if (exerciseProgress == 10) { sendValue("Keep holding it!"); }
+                else if (exerciseProgress == 11) { sendValue("Awesome job, a bit more"); }
+                else if (exerciseProgress == 13)
+                {
+                    sendValue("Nice, put it down");
+                    takeSnapshot = false;
+                    metric.setSkeleton(savedSkeleton);
+                    sendToFireBase(metric.getMetricName(), metric.getMetric());
+                }
+                else if (exerciseProgress == 15) { sendValue("Lets do one more"); savedSkeleton = null; }
+                else if (exerciseProgress == 16) { sendValue("This one is shrugging"); metric = new ShrugShoulders(new Skeleton(), 100); }
+                else if (exerciseProgress == 17) { sendValue("Shrug as hard as you can"); takeSnapshot = true; }
+                else if (exerciseProgress == 18) { sendValue("Get them up higher"); }
+                else if (exerciseProgress == 20)
+                {
+                    sendValue("Nicely done. Put them down");
+                    takeSnapshot = false;
+                    metric.setSkeleton(savedSkeleton);
+                    sendToFireBase(metric.getMetricName(), metric.getMetric());
+                }
+                else if (exerciseProgress == 22) {
+                    sendValue("We are finished today, have a nice life");
+                    savedSkeleton = null;
+                    sessionStarted = false;
+                    endSession = true;
+                }
+
                 exerciseProgress++;
             }
         }
@@ -573,7 +607,7 @@ namespace Microsoft.Samples.Kinect.SkeletonBasics
             sock.SendTo(send_buffer, endpoint);
         }
 
-        static void sendToFireBase(String MetricName, float Data)
+        static void sendToFireBase(String MetricName, double Data)
         {
             var json = Newtonsoft.Json.JsonConvert.SerializeObject(new
             {
@@ -583,7 +617,7 @@ namespace Microsoft.Samples.Kinect.SkeletonBasics
             });
 
 
-            var request = WebRequest.Create("https://mangohacks-da856.firebaseio.com/data.json");
+            var request = WebRequest.Create("https://mangohacks-da856.firebaseio.com/data/"+ MetricName + "/" + Guid.NewGuid() + ".json");
             request.Method = "PATCH";
             request.ContentType = "application/json";
             var buffer = Encoding.UTF8.GetBytes(json);

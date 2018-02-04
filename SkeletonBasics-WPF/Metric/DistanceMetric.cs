@@ -26,6 +26,11 @@ namespace Microsoft.Samples.Kinect.SkeletonBasics.Metric
             return dist1 > dist2;
         }
 
+        public double getDistance()
+        {
+            return getDistance(new SkeletonObject(this.skeleton));
+        }
+
         public abstract double getDistance(SkeletonObject o);
 
         public override bool isGoal()
@@ -33,6 +38,11 @@ namespace Microsoft.Samples.Kinect.SkeletonBasics.Metric
             SkeletonObject o = new SkeletonObject(this.skeleton);
             double distance = getDistance(o);
             return distance > this.goalDistance;
+        }
+
+        public override double getMetric()
+        {
+            return this.getDistance();
         }
     }
 }

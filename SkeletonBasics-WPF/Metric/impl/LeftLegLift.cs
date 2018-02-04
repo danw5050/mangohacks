@@ -1,19 +1,25 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using Microsoft.Kinect;
 
-namespace Microsoft.Samples.Kinect.SkeletonBasics.Metric {
-    class LeftLegLift : AngleMetric {
+namespace Microsoft.Samples.Kinect.SkeletonBasics.Metric
+{
+    class LeftLegLift : DistanceMetric {
 
-        const String MetricName = "LeftLegLift";
-
-        public LeftLegLift(Skeleton skeleton, double goalAngle) : base(skeleton, goalAngle) {
+        public LeftLegLift(Skeleton skeleton, double goalDistance) : base(skeleton, goalDistance) {
         }
 
-        protected override double getAngle(SkeletonObject o) {
-            return getAngle(o.AnkleLeft, o.HipCenter, o.HipRight);
+        public override double getDistance(SkeletonObject o)
+        {
+            double leftFootHeight = o.AnkleLeft.y;
+            double rightFootHeight = o.AnkleRight.y;
+
+            return leftFootHeight - rightFootHeight;
         }
+
+        public override string getMetricName()
+        {
+            return "LeftLegLift";
+        }
+        
     }
 }

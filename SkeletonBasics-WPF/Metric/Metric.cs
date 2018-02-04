@@ -7,6 +7,7 @@ using Microsoft.Kinect;
 namespace Microsoft.Samples.Kinect.SkeletonBasics.Metric
 {
     abstract class Metric {
+
         protected Skeleton skeleton;
 
         public Metric(Skeleton skeleton) {
@@ -20,5 +21,9 @@ namespace Microsoft.Samples.Kinect.SkeletonBasics.Metric
         public void setSkeleton(Skeleton s) {
             this.skeleton = s;
         }
+
+        public abstract double getMetric();
+
+        public abstract string getMetricName();
     }
 }
