@@ -638,5 +638,9 @@ namespace Microsoft.Samples.Kinect.SkeletonBasics
             videoPage.Visibility = Visibility.Hidden;
             settingsPage.Visibility = Visibility.Visible;
         }
+
+        private void SettingsSubmit_Click(object sender, RoutedEventArgs e) {
+            sendValue($"<data>{rateBox.Text},{pitchBox.Text}");
+        }
     }
 }

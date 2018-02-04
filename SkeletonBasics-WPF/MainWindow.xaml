@@ -59,9 +59,23 @@
             <Image Grid.Column="1" Source="Images\Status.png" Stretch="None" HorizontalAlignment="Center" Margin="0 0 0 5"/>
             <StackPanel Height="47" VerticalAlignment="Top" Width="100"/>
         </DockPanel>
-        <Viewbox Grid.Row="1" Stretch="Uniform" HorizontalAlignment="Right" Visibility="Hidden" Name="settingsPage" Width="550" Height="480">
-          
-            
+        <Viewbox Grid.Row="1" Stretch="Uniform" HorizontalAlignment="Right" Visibility="Hidden" Name="settingsPage" Width="550" Height="480" Margin="0 0 300 0">
+            <StackPanel>
+                <Label>Exercises</Label>
+                <ListBox SelectionMode="Multiple" FontSize="10">
+                    <ListBoxItem>Left Arm</ListBoxItem>
+                    <ListBoxItem>Right Arm</ListBoxItem>
+                    <ListBoxItem>Left Leg</ListBoxItem>
+                    <ListBoxItem>Right Leg</ListBoxItem>
+                    <ListBoxItem>Shoulder Shrugs</ListBoxItem>
+                </ListBox>
+                <Label>Voice Pitch</Label>
+                <TextBox x:Name="pitchBox"></TextBox>
+                <Label>Speech Rate</Label>
+                <TextBox x:Name="rateBox"></TextBox>
+                <Button Click="SettingsSubmit_Click">Submit</Button>
+            </StackPanel>
+
         </Viewbox>
 
         <Viewbox Grid.Row="1" Stretch="Uniform" HorizontalAlignment="Right"  Name="videoPage" Visibility="Visible" >
