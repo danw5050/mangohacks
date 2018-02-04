@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using Microsoft.Kinect;
 
-namespace Microsoft.Samples.Kinect.SkeletonBasics.Metric.impl
+namespace Microsoft.Samples.Kinect.SkeletonBasics.Metric
 {
     class ShrugShoulders : DistanceMetric
     {
@@ -17,7 +17,7 @@ namespace Microsoft.Samples.Kinect.SkeletonBasics.Metric.impl
             double shoulderHeight = (o.ShoulderLeft.y + o.ShoulderRight.y) / 2;
             double neckHeight = o.ShoulderCenter.y;
 
-            return neckHeight - shoulderHeight;
+            return shoulderHeight - neckHeight;
         }
     }
 }

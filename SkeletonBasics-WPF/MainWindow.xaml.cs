@@ -317,9 +317,10 @@ namespace Microsoft.Samples.Kinect.SkeletonBasics
             {
                 // Draw a transparent background to set the render size
                 //dc.DrawRectangle(Brushes.Black, null, new Rect(0.0, 0.0, RenderWidth, RenderHeight));
-                skeletonVisible = false;
+                // skeletonVisible = false;
+                Boolean skeletonVisibleTemp = false;
                 perfectSkeleton = false;
-                Metric.Metric metric = new RightArmLift(new Skeleton(), 100);
+                Metric.Metric metric = new ShrugShoulders(new Skeleton(), 100);
                 if (skeletons.Length != 0)
                 {
                     foreach (Skeleton skel in skeletons)
@@ -333,7 +334,7 @@ namespace Microsoft.Samples.Kinect.SkeletonBasics
                             metric.setSkeleton(skel);
 
                             perfectSkeleton = this.DrawBonesAndJoints(skel, dc, false);
-                            skeletonVisible = true;
+                            skeletonVisibleTemp = true;
 
                             if (takeSnapshot && perfectSkeleton && (savedSkeleton == null || metric.compare(savedSkeleton))) {
 
@@ -342,7 +343,7 @@ namespace Microsoft.Samples.Kinect.SkeletonBasics
                         }
                         else if (skel.TrackingState == SkeletonTrackingState.PositionOnly)
                         {
-                            skeletonVisible = true;
+                            skeletonVisibleTemp = true;
                             dc.DrawEllipse(
                             this.centerPointBrush,
                             null,
@@ -358,6 +359,8 @@ namespace Microsoft.Samples.Kinect.SkeletonBasics
                         this.DrawBonesAndJoints(savedSkeleton, dc, true);
                     }
                 }
+
+                skeletonVisible = skeletonVisibleTemp;
 
                 // prevent drawing outside of our render area
                 this.drawingGroup.ClipGeometry = new RectangleGeometry(new Rect(0.0, 0.0, RenderWidth, RenderHeight));
