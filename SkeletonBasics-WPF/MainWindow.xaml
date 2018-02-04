@@ -57,9 +57,16 @@
             <Image DockPanel.Dock="Left" Source="Images\Logo.png" Stretch="Fill" Height="32" Width="81" Margin="0 10 0 5"/>
             <TextBlock DockPanel.Dock="Right" Margin="0 0 -1 0" VerticalAlignment="Bottom" Foreground="{StaticResource MediumGreyBrush}" FontFamily="Segoe UI" FontSize="18">Skeleton Basics</TextBlock>
             <Image Grid.Column="1" Source="Images\Status.png" Stretch="None" HorizontalAlignment="Center" Margin="0 0 0 5"/>
+            <StackPanel Height="47" VerticalAlignment="Top" Width="100"/>
         </DockPanel>
-        <Viewbox Grid.Row="1" Stretch="Uniform" HorizontalAlignment="Right">
+        <Viewbox Grid.Row="1" Stretch="Uniform" HorizontalAlignment="Right" Visibility="Hidden" Name="settingsPage" Width="550" Height="480">
+          
+            
+        </Viewbox>
+
+        <Viewbox Grid.Row="1" Stretch="Uniform" HorizontalAlignment="Right"  Name="videoPage" Visibility="Visible" >
             <Image Name="Image2" Width="550" Height="480"/>
+
         </Viewbox>
         <Viewbox Grid.Row="1" Stretch="Uniform" HorizontalAlignment="Left">
             <Image Name="Image" Width="550" Height="480"/>
@@ -73,5 +80,10 @@
         <Label x:Name="label" Content="Sensor Angle (-27 to 27):" HorizontalAlignment="Left" Margin="204,10,0,0" Grid.Row="2" VerticalAlignment="Top"/>
         <TextBox x:Name="angleInput" HorizontalAlignment="Left" Height="23" Margin="355,11,0,0" Grid.Row="2" TextWrapping="Wrap" VerticalAlignment="Top" Width="120"/>
         <Button x:Name="angleButton" Content="Apply" HorizontalAlignment="Left" Margin="484,12,0,0" Grid.Row="2" VerticalAlignment="Top" Width="75" Click="angleButton_Click"/>
+        <Button x:Name="VideoButton" Content="Video" HorizontalAlignment="Left" Margin="721,12,0,0" Grid.Row="2" Grid.RowSpan="2" VerticalAlignment="Top" Width="201" Height="48" FontSize="20" Click="VideoButton_Click"/>
+        <Button x:Name="viewSettingsButton" Content="Settings" HorizontalAlignment="Left" Margin="955,15,0,0" Grid.Row="2" Grid.RowSpan="2" VerticalAlignment="Top" Width="201" Height="48" FontSize="20" Click="viewSettingsButton_Click"/>
     </Grid>
+
+
+
 </Window>

@@ -617,7 +617,7 @@ namespace Microsoft.Samples.Kinect.SkeletonBasics
             });
 
 
-            var request = WebRequest.Create("https://mangohacks-da856.firebaseio.com/data/"+ MetricName + "/" + Guid.NewGuid() + ".json");
+            var request = WebRequest.Create("https://mangohacks-da856.firebaseio.com/data/"+ MetricName + "/" + DateTime.Now.Ticks + ".json");
             request.Method = "PATCH";
             request.ContentType = "application/json";
             var buffer = Encoding.UTF8.GetBytes(json);
@@ -625,6 +625,18 @@ namespace Microsoft.Samples.Kinect.SkeletonBasics
             request.GetRequestStream().Write(buffer, 0, buffer.Length);
             var response = request.GetResponse();
             json = (new StreamReader(response.GetResponseStream())).ReadToEnd();
+        }
+
+        private void VideoButton_Click(object sender, RoutedEventArgs e)
+        {
+            videoPage.Visibility = Visibility.Visible;
+            settingsPage.Visibility = Visibility.Hidden;
+        }
+
+        private void viewSettingsButton_Click(object sender, RoutedEventArgs e)
+        {
+            videoPage.Visibility = Visibility.Hidden;
+            settingsPage.Visibility = Visibility.Visible;
         }
     }
 }
