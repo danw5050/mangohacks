@@ -26,3 +26,5 @@ C:\Users\Nick\Documents\mangohacks\SkeletonBasics-WPF\obj\Debug\SkeletonBasics-W
 C:\Users\Nick\Documents\mangohacks\SkeletonBasics-WPF\obj\Debug\SkeletonBasics-WPF.g.resources
 C:\Users\Nick\Documents\mangohacks\SkeletonBasics-WPF\obj\Debug\Microsoft.Samples.Kinect.SkeletonBasics.Properties.Resources.resources
 C:\Users\Nick\Documents\mangohacks\SkeletonBasics-WPF\obj\Debug\SkeletonBasics-WPF.csproj.GenerateResource.Cache
+C:\Users\Dan\Documents\GitHub\mangohacks\SkeletonBasics-WPF\bin\Debug\Newtonsoft.Json.dll
+C:\Users\Dan\Documents\GitHub\mangohacks\SkeletonBasics-WPF\bin\Debug\Newtonsoft.Json.xml

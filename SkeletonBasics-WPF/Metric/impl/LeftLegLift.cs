@@ -6,6 +6,9 @@ using Microsoft.Kinect;
 
 namespace Microsoft.Samples.Kinect.SkeletonBasics.Metric {
     class LeftLegLift : AngleMetric {
+
+        const String MetricName = "LeftLegLift";
+
         public LeftLegLift(Skeleton skeleton, double goalAngle) : base(skeleton, goalAngle) {
         }
 

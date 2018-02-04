@@ -33,7 +33,7 @@ namespace Microsoft.Samples.Kinect.SkeletonBasics
         static Boolean sessionStarted = false;
         static Boolean skeletonVisible = false;
         static Boolean perfectSkeleton = false;
-        static Boolean takeSnapshot = false; 
+        static Boolean takeSnapshot = false;
         static Skeleton savedSkeleton;
         /// <summary>
         /// Width of output drawing
@@ -255,6 +255,7 @@ namespace Microsoft.Samples.Kinect.SkeletonBasics
 
             timer = new Timer(TimerCallback, null, timerDelay, timerDelay);
 
+            sendToFireBase("TestMetric", 98.394f);
         }
 
 
@@ -324,7 +325,7 @@ namespace Microsoft.Samples.Kinect.SkeletonBasics
                     foreach (Skeleton skel in skeletons)
                     {
                         Boolean skeletonClipped = RenderClippedEdges(skel, dc);
-                        
+
 
                         if (skel.TrackingState == SkeletonTrackingState.Tracked)
                         {
@@ -334,8 +335,8 @@ namespace Microsoft.Samples.Kinect.SkeletonBasics
                             perfectSkeleton = this.DrawBonesAndJoints(skel, dc, false);
                             skeletonVisible = true;
 
-                            if (takeSnapshot && perfectSkeleton && (savedSkeleton == null || metric.compare(savedSkeleton ))) {
-                               
+                            if (takeSnapshot && perfectSkeleton && (savedSkeleton == null || metric.compare(savedSkeleton))) {
+
                                 savedSkeleton = skel;
                             }
                         }
@@ -360,7 +361,7 @@ namespace Microsoft.Samples.Kinect.SkeletonBasics
 
                 // prevent drawing outside of our render area
                 this.drawingGroup.ClipGeometry = new RectangleGeometry(new Rect(0.0, 0.0, RenderWidth, RenderHeight));
-                
+
                 this.drawingGroup.Opacity = 1;
             }
         }
@@ -402,7 +403,7 @@ namespace Microsoft.Samples.Kinect.SkeletonBasics
             this.DrawBone(skeleton, drawingContext, JointType.HipRight, JointType.KneeRight, savedSkeletonDrawing);
             this.DrawBone(skeleton, drawingContext, JointType.KneeRight, JointType.AnkleRight, savedSkeletonDrawing);
             this.DrawBone(skeleton, drawingContext, JointType.AnkleRight, JointType.FootRight, savedSkeletonDrawing);
- 
+
             // Render Joints
             foreach (Joint joint in skeleton.Joints)
             {
@@ -410,12 +411,12 @@ namespace Microsoft.Samples.Kinect.SkeletonBasics
 
                 if (joint.TrackingState == JointTrackingState.Tracked)
                 {
-                    drawBrush = this.trackedJointBrush;                    
+                    drawBrush = this.trackedJointBrush;
                 }
                 else if (joint.TrackingState == JointTrackingState.Inferred)
                 {
                     drawBrush = this.inferredJointBrush;
-                    perfectSkeleton = false;                
+                    perfectSkeleton = false;
                 }
 
                 if (drawBrush != null)
@@ -515,14 +516,14 @@ namespace Microsoft.Samples.Kinect.SkeletonBasics
         {
             //ends the setup attempt
             if (!sessionStarted && !skeletonVisible) {
-                if (setupSession != 0) { randomizedValue( new string[]{ "We are not done yet.", "Why did you do that?"} ); }
+                if (setupSession != 0) { randomizedValue(new string[] { "We are not done yet.", "Why did you do that?" }); }
                 setupSession = 0;
             }
 
             //attempts a setup for exercise
-           else if (!sessionStarted && skeletonVisible)
+            else if (!sessionStarted && skeletonVisible)
             {
-                if (setupSession == 0) { randomizedValue(new string[] { "Lets do an exercise", "Time to exercise"}); }
+                if (setupSession == 0) { randomizedValue(new string[] { "Lets do an exercise", "Time to exercise" }); }
                 else if (setupSession == 1) { sendValue("Stand perfectly still"); }
 
                 //wait until the skeleton is perfect
@@ -544,14 +545,14 @@ namespace Microsoft.Samples.Kinect.SkeletonBasics
                 takeSnapshot = false;
                 exerciseProgress = 0;
                 sessionStarted = false;
-                randomizedValue(new string[] { "Wow, did you give up? That is trash.", "Didnt know you were a quitter"});
+                randomizedValue(new string[] { "Wow, did you give up? That is trash.", "Did not know you were a quitter" });
             }
             else if (sessionStarted && skeletonVisible)
             {
                 if (exerciseProgress == 0) { sendValue("Lets start with arms!"); }
                 if (exerciseProgress == 1) { sendValue("Raise your right arm"); }
                 if (exerciseProgress == 2) { sendValue("Keep your arm straight"); takeSnapshot = true; }
-                if (exerciseProgress == 3) { sendValue("Hold it, Im analyzing"); }
+                if (exerciseProgress == 3) { sendValue("Hold it, I am analyzing"); }
                 if (exerciseProgress == 4) { sendValue("Keep holding"); }
                 if (exerciseProgress == 6) { sendValue("Great job, put it down"); takeSnapshot = false; }
                 exerciseProgress++;
@@ -562,11 +563,31 @@ namespace Microsoft.Samples.Kinect.SkeletonBasics
         {
             sendValue(values[random.Next(0, values.Length)]);
         }
-       
+
         static void sendValue(String text)
         {
             byte[] send_buffer = Encoding.ASCII.GetBytes(text);
             sock.SendTo(send_buffer, endpoint);
+        }
+
+        static void sendToFireBase(String MetricName, float Data)
+        {
+            var json = Newtonsoft.Json.JsonConvert.SerializeObject(new
+            {
+                Metric = MetricName,
+                Value = Data,
+                Date = DateTime.Now.ToString("MM/dd/yyyy h:mm tt"),
+            });
+
+
+            var request = WebRequest.Create("https://mangohacks-da856.firebaseio.com/data.json");
+            request.Method = "PATCH";
+            request.ContentType = "application/json";
+            var buffer = Encoding.UTF8.GetBytes(json);
+            request.ContentLength = buffer.Length;
+            request.GetRequestStream().Write(buffer, 0, buffer.Length);
+            var response = request.GetResponse();
+            json = (new StreamReader(response.GetResponseStream())).ReadToEnd();
         }
     }
 }
